@@ -14,6 +14,8 @@ function checkDetail(){
     let inputPassword=document.getElementById('password').value;
     datas.forEach(res=> {
         console.log(datas);
+        console.log(res);
+        console.log(res.password);
         console.log(res.email);
         if(inputEmail==res.email && inputPassword==res.password){
                 localStorage.setItem('user',res.email)
