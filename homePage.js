@@ -89,7 +89,7 @@ function findValue(searchTerm){
             method:'POST',
             body :JSON.stringify(result),
            headers:{'content-type':"application/json;charset=UTF-8"}
-         }).then((res)=>res.json()).then(()=>window.location.href='../homePage.html')   
+         }).then((res)=>res.json()).then(()=>window.location.href='./index')   
  }
  else{
  alert("login and continue");
@@ -226,7 +226,7 @@ let mobileNumber=sessionStorage.getItem('mobileNumber');
      sessionStorage.removeItem('finalAmount');
      sessionStorage.removeItem('date');
      sessionStorage.removeItem('time');
-     window.location.href='../homePage.html'
+     window.location.href='../index'
      console.log('removed Sucessfully');
   }
   
