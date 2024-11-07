@@ -120,6 +120,8 @@ function findValue(searchTerm){
         existingProduct.productQuantity=quantityInput;
         if(priceElement>existingProduct.productPrice){
            total=(total-existingProduct.productPrice)+(priceElement)
+           gstAmount=Math.floor(total/100*18);
+           finalAmount=gstAmount+total
            existingProduct.productPrice=priceElement;
         }
         else if(priceElement<existingProduct.productPrice)
