@@ -245,7 +245,7 @@ let mobileNumber=sessionStorage.getItem('mobileNumber');
   }
   checkLogin()
   function login(){
-    window.location.href='../login.html'
+    window.location.href='./login'
   }
   function logOut(){
     localStorage.removeItem('user');
