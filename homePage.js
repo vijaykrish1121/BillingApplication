@@ -100,6 +100,7 @@ function findValue(searchTerm){
   var priceElement = Number(document.getElementById('price-' + index).innerHTML); 
   var inputName = document.getElementById('name-' + index).innerHTML; 
    
+  console.log(priceElement);
    let existingProduct=selectedProducts.find((value)=>value.productName==inputName)
    if(!existingProduct){
     let newValue={
