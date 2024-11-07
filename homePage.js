@@ -226,7 +226,7 @@ let mobileNumber=sessionStorage.getItem('mobileNumber');
      sessionStorage.removeItem('finalAmount');
      sessionStorage.removeItem('date');
      sessionStorage.removeItem('time');
-     window.location.href='../index'
+     window.location.href='./index'
      console.log('removed Sucessfully');
   }
   

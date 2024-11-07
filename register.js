@@ -20,7 +20,7 @@
         headers: {
             'Content-Type': 'application/json;charset=UTF-8',
           },
-       }).then((response)=>response.json).then(()=>window.location.href='../login.html')
+       }).then((response)=>response.json).then(()=>window.location.href='./login')
        alert('register sucessfull')
       }
       else{
