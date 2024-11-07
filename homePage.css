@@ -1,0 +1,42 @@
+.heading{
+    text-align: center;
+}
+#results {
+    list-style-type: none;
+    padding: 0;
+}
+
+#results li {
+    margin: 5px 0;
+    padding: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
+#no-stripe{
+    background-color: inherit;
+}
+
+body {
+    background-color:aquamarine;
+        
+} 
+.border{
+    border: 2px solid black;
+}
+.login-container {
+    max-width: 400px; 
+    margin: 200px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.register-container {
+    max-width: 500px; 
+    margin: 150px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
