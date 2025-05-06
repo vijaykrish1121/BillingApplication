@@ -20,7 +20,9 @@ function checkDetail(){
         if(inputEmail==res.email && inputPassword==res.password){
                 localStorage.setItem('user',res.email)
                sessionStorage.setItem('user',res.email)
-                 window.location.href='./index'
+                 window.location.href='./index.html'
+                   
+          alert("Login successful!");
         }
         else{
         document.getElementById('msg').innerHTML='<div class="text-danger">invaild user or Register and Continue</div>';  

@@ -6,50 +6,71 @@ let filteredData=[];
 let total=0;
 let gstAmount=0;
 let finalAmount=0;
- const url='https://retoolapi.dev/ZSO4od/data'
-function fetchData(){
-   let user=localStorage.getItem('user')
-  console.log(user);
-  if(user!='' && user!=null){
-  fetch(`${url}?user=${user}`,{
-    method:'GET',
-    headers: {
+ const url='https://retoolapi.dev/ZSO4od/data';
+
+ function fetchData() {
+  updateLoginUI();
+  const user = localStorage.getItem('user');
+
+  if (user && user.trim() !== '') {
+    fetch(`${url}?user=${user}`, {
+      method: 'GET',
+      headers: {
         'Content-Type': 'application/json',
       }
-  }).then(response => response.json())
-  .then(data=>{  
-    values=data 
-       values.sort((a,b) => a.productName.toLowerCase().localeCompare(b.productName.toLowerCase()));
-    
-  let resultsList=''
-  let quantity=Number(document.getElementById('choosedQuantity')); 
-  console.log(quantity);
-    values.forEach((res) => {         
-    // resultsList +='<div class="row mt-4">' +
-    // '<div class="col-3">' +'<ul>'+'<li>'+value.productName+'</li>'+'</ul>'+ '</div>'+ '<div class="col-2">'+ '<input type="number" class="form-control" value=1>'+'</div>'+ '<div class="col-2">'+'<button type="button" class="btn btn-success">'+'add'+'</button>'+'</div>'+'</div>';
-    resultsList+='<tr>'+
-    '<td id="name-' + res.id + '">'+res.productName+'</td>'+
-    '<td id="price-' + res.id + '">₹' + res.price + '</td>' +
-    '<td><input type="number" class="input-sm" value="1" id="choosedQuantity-' + res.id + '" min="1" onkeyup="updatePrice(' + res.id + ')"></td>' +
-    '<td>'+'<button type="button" class="btn btn-success btn-sm" id="btn-'+res.id+'" onclick="addBilling('+res.id+')">'+'add'+'</button>'+'</td>'
- '</tr>'
-    document.getElementById('tableValues').innerHTML=resultsList
-     });
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (!Array.isArray(data) || data.length === 0) {
+        document.getElementById('tableValues').innerHTML = '<tr><td colspan="4" class="text-center text-muted">No products available</td></tr>';
+        return;
+      }
 
- })
+      const values = data.sort((a, b) => 
+        a.productName.toLowerCase().localeCompare(b.productName.toLowerCase())
+      );
+
+      let resultsList = '';
+
+      values.forEach(res => {
+   
+        resultsList += `
+          <tr id="row-${res.id}">
+            <td id="name-${res.id}">${res.productName}</td>
+            <td id="price-${res.id}">₹${res.price}</td>
+            <td>
+              <input type="number" class="form-control form-control-sm" value="1" min="1" id="choosedQuantity-${res.id}" onkeyup="updatePrice(${res.id})">
+            </td>
+        <td id="stock-${res.id}" class="${res.quantity > 0 ? '' : 'text-danger'}">
+  ${res.quantity > 0 ? res.quantity : 'Not in Stock'}
+</td>
+            <td id="subtotal-${res.id}">₹${res.price}</td> <!-- Subtotal cell -->
+            <td>
+              <button type="button" class="btn btn-success btn-sm" onclick="addBilling(${res.id})">Add</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('tableValues').innerHTML = resultsList;
+    })
+    .catch(error => {
+      console.error('Error fetching product data:', error);
+      document.getElementById('tableValues').innerHTML = '<tr><td colspan="4" class="text-danger text-center">Error loading products</td></tr>';
+    });
+
+  } else {
+    const msg = '<div class="text-warning">Please login to continue</div>';
+    document.getElementById('msg').innerHTML = msg;
+  }
 }
-else{
-let msg='<div class="text-warning"> login and continue</div>';
-document.getElementById('msg').innerHTML=msg
-}
-  } 
-  function updatePrice(index) {
-    var quantityInput = document.getElementById('choosedQuantity-' + index);
-    var priceElement = document.getElementById('price-' + index);
-    console.log(values);
-    var product = values.find(res=>res.id==index);    
-    var totalPrice = product.price * quantityInput.value;
-    priceElement.innerHTML = + totalPrice;
+
+function updatePrice(id) {
+  const price = parseFloat(document.getElementById(`price-${id}`).textContent.replace('₹', '')) || 0;
+  const quantity = parseInt(document.getElementById(`choosedQuantity-${id}`).value) || 1;
+  const subtotal = price * quantity;
+
+  document.getElementById(`subtotal-${id}`).textContent = `₹${subtotal.toFixed(2)}`;
 }
 
 
@@ -89,90 +110,108 @@ function findValue(searchTerm){
             method:'POST',
             body :JSON.stringify(result),
            headers:{'content-type':"application/json;charset=UTF-8"}
-         }).then((res)=>res.json()).then(()=>window.location.href='./index')   
+         }).then((res)=>res.json()).then(()=>window.location.href='./index.html')   
  }
  else{
  alert("login and continue");
  }
  }
- function addBilling(index){
-  var quantityInput = document.getElementById('choosedQuantity-' + index).value;
-  var priceElement = Number(document.getElementById('price-' + index).innerHTML); 
-  var inputName = document.getElementById('name-' + index).innerHTML; 
-   
-  console.log(priceElement);
-   let existingProduct=selectedProducts.find((value)=>value.productName==inputName)
-   if(!existingProduct){
-    let newValue={
-      productName:inputName,
-      productQuantity:quantityInput,
-      productPrice:priceElement,
-    }
-    selectedProducts.push(newValue);  
-    total+=priceElement
-    gstAmount=Math.floor(total/100*18);
-    finalAmount=gstAmount+total
+ function addBilling(index) {
+  const stock = document.getElementById('stock-' + index).innerText;
+  if (stock === "Not in Stock") {
+    alert("Cannot add. This product is out of stock.");
+    return;
   }
-  else  {
-    console.log(existingProduct);  
-        // confirm(`already product Added !\n Else click Ok Change Quantity`);
-        if(confirm(`already product Added !\n  click Ok Change Quantity`)==true){
-        existingProduct.productQuantity=quantityInput;
-        if(priceElement>existingProduct.productPrice){
-           total=(total-existingProduct.productPrice)+(priceElement)
-           gstAmount=Math.floor(total/100*18);
-           finalAmount=gstAmount+total
-           existingProduct.productPrice=priceElement;
-        }
-        else if(priceElement<existingProduct.productPrice)
-             {
-              total=(total-existingProduct.productPrice)+(priceElement)
-              gstAmount=Math.floor(total/100*18);
-              finalAmount=gstAmount+total
-              existingProduct.productPrice=priceElement;
-             }
-            }         
-  }  
-        document.getElementById('amt').innerHTML=total
-        document.getElementById('gst').innerHTML=gstAmount
-        document.getElementById('fnl').innerHTML=finalAmount
-         addSession();
-      }
- function updateQuantity(prdName,quantity1){
-  let user=localStorage.getItem('user')
-  fetch(`${url}?productName=${prdName}&&user=${user}`,{
-    method :'GET',
-    headers:{
+  const quantityInput = Number(document.getElementById('choosedQuantity-' + index).value);
+  const priceText = document.getElementById('price-' + index).innerText; // e.g., "₹100"
+  const priceElement = Number(priceText.replace(/[^\d.]/g, '')); // Removes ₹ symbol
+  const inputName = document.getElementById('name-' + index).innerText;
+
+  if (isNaN(quantityInput) || quantityInput < 1) {
+    alert("Please enter a valid quantity.");
+    return;
+  }
+
+  const totalProductPrice = priceElement * quantityInput;
+
+  let existingProduct = selectedProducts.find((value) => value.productName === inputName);
+
+  if (!existingProduct) {
+    let newValue = {
+      productName: inputName,
+      productQuantity: quantityInput,
+      productPrice: totalProductPrice,
+    };
+    selectedProducts.push(newValue);
+    total += totalProductPrice;
+  } else {
+    if (confirm(`Product already added!\nClick OK to update the quantity.`)) {
+      total = total - existingProduct.productPrice + totalProductPrice;
+      existingProduct.productQuantity = quantityInput;
+      existingProduct.productPrice = totalProductPrice;
+    }
+  }
+
+  gstAmount = Math.floor((total * 18) / 100);
+  finalAmount = total + gstAmount;
+
+  document.getElementById('amt').innerText = total.toFixed(2);
+  document.getElementById('gst').innerText = gstAmount.toFixed(2);
+  document.getElementById('fnl').innerText = finalAmount.toFixed(2);
+
+  addSession();
+}
+
+
+function updateQuantity(prdName, quantity1) {
+  let user = localStorage.getItem('user');
+  if (!user || !prdName || isNaN(quantity1)) {
+    console.error("Invalid input to updateQuantity");
+    return;
+  }
+
+  fetch(`${url}?productName=${encodeURIComponent(prdName)}&user=${encodeURIComponent(user)}`, {
+    method: 'GET',
+    headers: {
       'Content-Type': 'application/json',
     }
-  }).then(response=>response.json())
-  .then((data)=>{
-    filteredData=data 
-        filteredData.forEach((val)=>{ 
-   let previousQuantity=val.quantity;
-       let reducedQuantity=previousQuantity-quantity1;
-       console.log(previousQuantity);
-       console.log(quantity1);
-       console.log(reducedQuantity);
-        val.quantity=reducedQuantity;
-        console.log(filteredData);
-        console.log(val.id);
-       fetch(`${url}/${val.id}`,{
-        method:'PUT',
+  })
+  .then(response => response.json())
+  .then((data) => {
+    data.forEach((val) => {
+      const previousQuantity = Number(val.quantity);
+      const reducedQuantity = previousQuantity - Number(quantity1);
+
+      if (reducedQuantity < 0) {
+        alert(`Error: Reduced quantity is negative for product ${val.productName}`);
+        return;
+      }
+
+      fetch(`${url}/${val.id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-         body:JSON.stringify({
-           user:user,
-          quantity:reducedQuantity,
-          price:val.price,
-          productName:val.productName
-         })
-       }).then(response=>response.json()).then(data=>console.log(data))
-       
+        body: JSON.stringify({
+          user: user,
+          quantity: reducedQuantity,
+          price: val.price,
+          productName: val.productName
+        })
       })
-      } )
- }
+      .then(response => response.json())
+      .then(updated => {
+        console.log("Quantity updated:", updated);
+      })
+      .catch(error => console.error("PUT request failed:", error));
+    });
+  })
+  .catch(error => {
+    console.error("GET request failed:", error);
+  });
+}
+
+
 
  function fetchBill(){
  let result= sessionStorage.getItem('myValues')
@@ -229,30 +268,21 @@ let mobileNumber=sessionStorage.getItem('mobileNumber');
      sessionStorage.removeItem('finalAmount');
      sessionStorage.removeItem('date');
      sessionStorage.removeItem('time');
-     window.location.href='./index'
+     window.location.href='./index.html'
      console.log('removed Sucessfully');
   }
   
-  function checkLogin(){
-   let user=localStorage.getItem('user');
-   if(user){
-    let result=''
-  result='<button type="button" id="logOut" class="btn btn-danger" onclick="logOut()">logOut</button>'
-  document.getElementById('btn').innerHTML=result
-   }
-   else{
-   let result=''
- result='<button type="button" id="logOut" class="btn btn-success" onclick="login()" >LogIn</button>'
- document.getElementById('btn').innerHTML=result
-   }
+  function login() {
+     window.location.href="./login.html"
   }
-  checkLogin()
-  function login(){
-    window.location.href='./login'
+  function logout() {
+    localStorage.removeItem("user");
+    location.reload();   
+     alert("Logged out successfully!");
   }
-  function logOut(){
-    localStorage.removeItem('user');
-    alert('loged out sucessfully');
-  checkLogin();
-  location.reload();
+   updateLoginUI();
+  function updateLoginUI() {
+    const isLoggedIn = localStorage.getItem("user") ;
+    document.getElementById("loginBtn").style.display = isLoggedIn ? "none" : "inline-block";
+    document.getElementById("logoutBtn").style.display = isLoggedIn ? "inline-block" : "none";
   }

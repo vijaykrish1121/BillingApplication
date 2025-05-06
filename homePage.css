@@ -16,10 +16,6 @@
     background-color: inherit;
 }
 
-body {
-    background-color:aquamarine;
-        
-} 
 .border{
     border: 2px solid black;
 }
@@ -40,3 +36,21 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+body {
+    background-color: #f8f9fa;
+  }
+  
+  h1 {
+    color: #0d6efd;
+  }
+  
+  .card {
+    border-radius: 1rem;
+  }
+  
+  label {
+    font-weight: 500;
+  }
+  #loginBtn, #logoutBtn {
+    min-width: 100px;
+  }
