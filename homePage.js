@@ -6,7 +6,7 @@ let filteredData=[];
 let total=0;
 let gstAmount=0;
 let finalAmount=0;
- const url='https://retoolapi.dev/ZSO4od/data';
+ const url='https://retoolapi.dev/ewPBx0/data';
 
  function fetchData() {
   updateLoginUI();

@@ -1,4 +1,4 @@
-const url='https://retoolapi.dev/BBAzhF/data';
+const url='https://retoolapi.dev/gFQjF2/data';
 let datas=[]
 function getData(){
      fetch(url,{

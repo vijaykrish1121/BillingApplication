@@ -13,14 +13,14 @@
         password:password
      }
      console.log(userName);
-     const url='https://retoolapi.dev/BBAzhF/data'
+     const url='https://retoolapi.dev/gFQjF2/data'
        fetch(url,{
         method:'POST',
         body:JSON.stringify(details),
         headers: {
             'Content-Type': 'application/json;charset=UTF-8',
           },
-       }).then((response)=>response.json).then(()=>window.location.href='./login')
+       }).then((response)=>response.json).then(()=>window.location.href='./homePage.html')
        alert('register sucessfull')
       }
       else{

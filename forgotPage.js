@@ -4,7 +4,7 @@
   let pass=document.getElementById('password').value
   let confrmPass=document.getElementById('confrmPassword').value
   console.log(pass);
-  let url='https://retoolapi.dev/BBAzhF/data'
+  let url='https://retoolapi.dev/gFQjF2/data'
    if(pass==confrmPass){
   fetch(`${url}?email=${email}`,{
     method:'GET'
